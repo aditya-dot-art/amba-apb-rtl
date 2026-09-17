@@ -175,3 +175,24 @@ While PREADY remains LOW:
 - `PWUSER` remains unchanged.
 
 The Requester must continue to hold the transaction signals stable until the Completer asserts PREADY.
+
+```text
+             Setup        Access        Wait        Wait       Complete
+               |            |            |           |            |
+PCLK       ____|‾‾‾‾|_____|‾‾‾‾|_____|‾‾‾‾|_____|‾‾‾‾|_____|‾‾‾‾|___
+
+PSEL       ____‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾____
+
+PENABLE    _____________‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾____
+
+PWRITE     ____‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾____
+
+PADDR      ____<--------------- Address ---------------->____
+
+PWDATA     ____<-------------- Write Data -------------->____
+
+PREADY     _____________0____________0____________1___________
+                         |            |            |
+                       Wait         Wait       Transfer
+                       State        State      Complete
+```
