@@ -110,7 +110,7 @@ PREADY      ______________‾‾‾‾‾‾‾‾________
                          Transfer
                          Complete
 ```
-### APB Write Transfer With Wait States
+### 2. APB Write Transfer With Wait States
 
 An APB write transfer with wait states occurs when the Completer requires additional clock cycles before it can complete the transfer.
 
