@@ -109,7 +109,69 @@ PWDATA      ______<----- Write Data ---->___
 PREADY      ______________‾‾‾‾‾‾‾‾________
                          Transfer
                          Complete
+```
+### APB Write Transfer With Wait States
 
+An APB write transfer with wait states occurs when the Completer requires additional clock cycles before it can complete the transfer.
 
+The Completer uses the `PREADY` signal to extend the Access phase. When `PREADY` is LOW, the transfer remains in the Access phase. The transfer completes when `PREADY` becomes HIGH.
 
-dscdsvsdvfdvfv
+### Transfer Phases
+
+An APB write transfer consists of:
+
+1. Setup Phase
+2. Access Phase
+3. Wait State(s), if required
+
+---
+
+### 1. Setup Phase
+
+During the Setup phase:
+
+- `PSEL` is asserted HIGH.
+- `PENABLE` is LOW.
+- `PWRITE` is HIGH, indicating a write transfer.
+- `PADDR` contains the target address.
+- `PWDATA` contains the data to be written.
+
+The address, direction, and write data must be valid when `PSEL` is asserted.
+
+```text
+PSEL     = 1
+PENABLE  = 0
+PWRITE   = 1
+PADDR    = Valid Address
+PWDATA   = Valid Write Data
+```
+### 2. Access Phase
+
+After the Setup phase, the APB interface enters the Access phase.
+
+During the Access phase, the Requester asserts `PENABLE` HIGH while keeping `PSEL` HIGH. The address, direction, and write data remain stable.
+
+### Signal Requirements
+
+```text
+PSEL     = 1
+PENABLE  = 1
+PWRITE   = 1
+PADDR    = Valid and stable
+PWDATA   = Valid and stable
+```
+Wait State Behavior
+
+While PREADY remains LOW:
+
+- `PSEL` remains HIGH.
+ - `PENABLE` remains HIGH.
+- `PWRITE` remains HIGH.
+- `PADDR` remains unchanged.
+- `PWDATA` remains unchanged.
+- `PSTRB` remains unchanged.
+- `PPROT` remains unchanged.
+- `PAUSER` remains unchanged.
+- `PWUSER` remains unchanged.
+
+The Requester must continue to hold the transaction signals stable until the Completer asserts PREADY.
