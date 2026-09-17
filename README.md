@@ -109,3 +109,7 @@ PWDATA      ______<----- Write Data ---->___
 PREADY      ______________‾‾‾‾‾‾‾‾________
                          Transfer
                          Complete
+
+
+
+dscdsvsdvfdvfv
