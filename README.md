@@ -46,3 +46,66 @@ Signal Description Table
 | `PWUSER` | Requester | USER_DATA_WIDTH | Optional user-defined write-data attribute signal. |
 | `PRUSER` | Completer | USER_DATA_WIDTH | Optional user-defined read-data attribute signal. |
 | `PBUSER` | Completer | USER_RESP_WIDTH | Optional user-defined response attribute signal. |
+
+## APB Write Transfer
+
+An APB write transfer is used to transfer data from the Requester to the selected Completer. A write transfer consists of two main phases:
+
+1. Setup Phase
+2. Access Phase
+
+### 1. Write Transfer Without Wait States
+
+In a write transfer without wait states, the transfer completes in the minimum number of cycles.
+
+#### Setup Phase
+
+During the Setup phase:
+
+- `PSEL` is asserted HIGH.
+- `PENABLE` is LOW.
+- `PWRITE` is HIGH, indicating a write transfer.
+- `PADDR` contains the address of the peripheral register.
+- `PWDATA` contains the data to be written.
+
+The `PADDR`, `PWRITE`, and `PWDATA` signals must be valid when `PSEL` is asserted.
+
+#### Access Phase
+
+In the next clock cycle:
+
+- `PSEL` remains HIGH.
+- `PENABLE` is asserted HIGH.
+- `PADDR`, `PWRITE`, and `PWDATA` remain stable.
+- The Completer asserts `PREADY` HIGH.
+
+When `PREADY` is HIGH during the Access phase, the write transfer completes at the rising edge of `PCLK`.
+
+After the transfer completes:
+
+- `PENABLE` is deasserted.
+- `PSEL` is deasserted if there is no subsequent transfer.
+- If another transfer follows to the same peripheral, `PSEL` can remain asserted.
+
+#### Timing
+
+```text
+             Setup Phase          Access Phase
+                 |                     |
+PCLK       _____|‾‾‾‾‾|_____|‾‾‾‾‾|_____
+                 T1                    T2
+
+PSEL        ______‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾______
+
+PENABLE     ______________‾‾‾‾‾‾‾‾________
+
+PWRITE      ______‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾______
+             WRITE
+
+PADDR       ______<------ Address ------>____
+
+PWDATA      ______<----- Write Data ---->___
+
+PREADY      ______________‾‾‾‾‾‾‾‾________
+                         Transfer
+                         Complete
